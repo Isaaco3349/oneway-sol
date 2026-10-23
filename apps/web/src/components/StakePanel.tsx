@@ -13,7 +13,7 @@ type PublicConfig = {
 
 export function StakePanel() {
   const [config, setConfig] = useState<PublicConfig | null>(null);
-  const [amount, setAmount] = useState("25");
+  const [amount, setAmount] = useState("1");
   const { connect, disconnect, isConnected } = useEvmWallet();
 
   useEffect(() => {
@@ -79,9 +79,10 @@ export function StakePanel() {
             className="input"
             type="number"
             min={1}
-            step={1}
+            step={0.01}
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
+            placeholder="Minimum 1 USDC recommended for bridge fees"
             disabled={flow.phase === "awaiting-deposit" || !isConnected}
           />
         </label>
@@ -131,8 +132,11 @@ export function StakePanel() {
         {flow.solanaIntermediary ? (
           <div className="address-block">
             <p className="muted" style={{ margin: "0 0 0.25rem" }}>
-              <strong style={{ color: "var(--text)" }}>Your Solana intermediary</strong> (derived from
-              your EVM wallet; Aurora executes Kamino steps here until you move funds)
+              <strong style={{ color: "var(--text)" }}>Your Solana intermediary</strong>
+            </p>
+            <p className="muted" style={{ margin: "0 0 0.35rem", fontSize: "0.88rem" }}>
+              Aurora looks up a stable Solana account tied to your EVM address (you control it by
+              signing with MetaMask). Kamino steps run from this account after your deposit settles.
             </p>
             <code className="inline">{flow.solanaIntermediary}</code>
           </div>
