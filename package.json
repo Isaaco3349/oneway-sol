@@ -1,0 +1,15 @@
+{
+  "name": "oneway-sol",
+  "private": true,
+  "description": "OneWay — bridge any-chain USDC into Kamino yield on Solana via Aurora Intents Connect (Solana Hackathon 2026)",
+  "scripts": {
+    "dev": "pnpm --filter @oneway/connect build && pnpm --filter @oneway/web dev",
+    "build": "pnpm --filter @oneway/connect build && pnpm --filter @oneway/web build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@9.15.0"
+}
