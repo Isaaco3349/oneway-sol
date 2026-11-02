@@ -150,16 +150,20 @@ export function useStakeFlow(config: {
       if (!execution?.quote?.depositAddress) {
         throw new Error("No deposit address on execution");
       }
-      await auroraFetch("/api/v1/executions/deposit/submit", {
-        method: "POST",
-        body: JSON.stringify({
-          txHash,
-          depositAddress: execution.quote.depositAddress,
-          ...(execution.quote.depositMemo
-            ? { memo: execution.quote.depositMemo }
-            : {}),
-        }),
-      });
+      try {
+        await auroraFetch("/api/v1/executions/deposit/submit", {
+          method: "POST",
+          body: JSON.stringify({
+            txHash,
+            depositAddress: execution.quote.depositAddress,
+            ...(execution.quote.depositMemo
+              ? { memo: execution.quote.depositMemo }
+              : {}),
+          }),
+        });
+      } catch (e) {
+        console.warn("Deposit notify skipped:", e);
+      }
       setPhase("complete");
     },
     [execution],
