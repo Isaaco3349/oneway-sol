@@ -101,29 +101,35 @@ export function useStakeFlow(config: {
         dry: false,
       };
 
-      const created = await auroraFetch<{ result?: CreateExecutionResult }>(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const created = await auroraFetch<any>(
         `/api/v1/executions/${address}`,
         { method: "POST", body: JSON.stringify(body) },
       );
 
-      const exec = result?.result ?? result;
+      // Aurora wraps the execution inside "result"
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const exec: any = created?.result ?? created;
       console.log("Aurora execution:", exec);
 
       if (!exec?.id || !exec?.details?.payload) {
-        throw new Error("Unexpected: " + JSON.stringify(result).slice(0, 300));
+        throw new Error(
+          "Unexpected: " + JSON.stringify(created).slice(0, 300),
+        );
       }
 
-      setExecution(exec);
+      // The rest of the app reads executionId, Aurora returns id
+      setExecution({ ...exec, executionId: exec.id } as CreateExecutionResult);
       setPhase("signing");
 
-      const sigHex = await signIntentPayload(result.details.payload);
+      const sigHex = await signIntentPayload(exec.details.payload);
 
       setPhase("submitting");
       await auroraFetch(`/api/v1/executions/${address}/submit`, {
         method: "POST",
         body: JSON.stringify({
           signature: encodeEvmIntentSignature(sigHex),
-          executionId: result.executionId,
+          executionId: exec.id,
         }),
       });
 
