@@ -106,12 +106,14 @@ export function useStakeFlow(config: {
         { method: "POST", body: JSON.stringify(body) },
       );
 
-      const result = created.result;
-      if (!result?.details?.payload || !result.executionId) {
-        throw new Error("Unexpected execution response — missing payload or id");
+      const exec = result?.result ?? result;
+      console.log("Aurora execution:", exec);
+
+      if (!exec?.id || !exec?.details?.payload) {
+        throw new Error("Unexpected: " + JSON.stringify(result).slice(0, 300));
       }
 
-      setExecution(result);
+      setExecution(exec);
       setPhase("signing");
 
       const sigHex = await signIntentPayload(result.details.payload);
