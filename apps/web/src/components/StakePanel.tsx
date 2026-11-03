@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useStakeFlow } from "@/hooks/useStakeFlow";
 import { useEvmWallet } from "@/lib/evm-wallet";
-
+import { PositionCard } from "@/components/PositionCard";
 type PublicConfig = {
   originAsset: string;
   destinationAsset: string;
@@ -141,6 +141,7 @@ export function StakePanel() {
             <code className="inline">{flow.solanaIntermediary}</code>
           </div>
         ) : null}
+        <PositionCard flow={flow} />
       </div>
 
       {flow.depositInstructions ? (
