@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useStakeFlow } from "@/hooks/useStakeFlow";
 import { useEvmWallet } from "@/lib/evm-wallet";
-
+import { PositionCard } from "@/components/PositionCard";
+import { ExecutionStatus } from "@/components/ExecutionStatus";
 type PublicConfig = {
   originAsset: string;
   destinationAsset: string;
@@ -141,6 +142,25 @@ export function StakePanel() {
             <code className="inline">{flow.solanaIntermediary}</code>
           </div>
         ) : null}
+        <PositionCard flow={flow} />
+        <ExecutionStatus
+          address={flow.address}
+          executionId={flow.depositInstructions?.executionId}
+          title="Stake status"
+          onFinished={() => {
+            void flow.refreshBalances();
+            setTimeout(() => void flow.refreshBalances(), 5000);
+          }}
+        />
+        <ExecutionStatus
+          address={flow.address}
+          executionId={flow.withdrawExecutionId}
+          title="Withdraw status"
+          onFinished={() => {
+            void flow.refreshBalances();
+            setTimeout(() => void flow.refreshBalances(), 5000);
+          }}
+        />
       </div>
 
       {flow.depositInstructions ? (
